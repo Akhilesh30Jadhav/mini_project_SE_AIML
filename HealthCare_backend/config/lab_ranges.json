@@ -1,0 +1,180 @@
+{
+    "version": "1.0",
+    "ranges": {
+        "Hemoglobin": {
+            "unit": "g/dL",
+            "low": 12.0,
+            "high": 17.5,
+            "deficiency_name": "Anemia / Low Hemoglobin",
+            "explanation": "Low hemoglobin may indicate anemia. Common causes include iron deficiency, B12/folate deficiency, or chronic disease."
+        },
+        "WBC": {
+            "unit": "10^3/µL",
+            "low": 4.0,
+            "high": 11.0,
+            "deficiency_name": "Low White Blood Cells",
+            "explanation": "Low WBC (leukopenia) may suggest a weakened immune system, viral infection, or bone marrow issue."
+        },
+        "RBC": {
+            "unit": "10^6/µL",
+            "low": 4.0,
+            "high": 6.0,
+            "deficiency_name": "Low Red Blood Cells",
+            "explanation": "Low RBC count can indicate anemia or nutritional deficiencies including iron, B12, or folate."
+        },
+        "Platelets": {
+            "unit": "10^3/µL",
+            "low": 150.0,
+            "high": 400.0,
+            "deficiency_name": "Thrombocytopenia",
+            "explanation": "Low platelet count (thrombocytopenia) may impair blood clotting. Causes include viral illness, medications, or autoimmune conditions."
+        },
+        "Hematocrit": {
+            "unit": "%",
+            "low": 36.0,
+            "high": 52.0,
+            "deficiency_name": "Low Hematocrit",
+            "explanation": "Low hematocrit is often associated with anemia or blood loss."
+        },
+        "MCV": {
+            "unit": "fL",
+            "low": 80.0,
+            "high": 100.0,
+            "deficiency_name": "Abnormal MCV",
+            "explanation": "Low MCV may suggest iron deficiency anemia; high MCV may indicate B12 or folate deficiency."
+        },
+        "Glucose (Fasting)": {
+            "unit": "mg/dL",
+            "low": 70.0,
+            "high": 99.0,
+            "deficiency_name": "Abnormal Fasting Glucose",
+            "explanation": "Fasting glucose above 126 mg/dL on two tests suggests diabetes. 100-125 mg/dL indicates prediabetes."
+        },
+        "HbA1c": {
+            "unit": "%",
+            "low": 0.0,
+            "high": 5.6,
+            "deficiency_name": "Elevated HbA1c",
+            "explanation": "HbA1c reflects average blood sugar over 3 months. 5.7–6.4% indicates prediabetes; ≥6.5% indicates diabetes."
+        },
+        "Total Cholesterol": {
+            "unit": "mg/dL",
+            "low": 0.0,
+            "high": 199.0,
+            "deficiency_name": "High Cholesterol",
+            "explanation": "High total cholesterol increases cardiovascular risk. Lifestyle changes and/or medication may be recommended."
+        },
+        "LDL": {
+            "unit": "mg/dL",
+            "low": 0.0,
+            "high": 99.0,
+            "deficiency_name": "High LDL (Bad Cholesterol)",
+            "explanation": "Elevated LDL is a major risk factor for heart disease and stroke. Diet, exercise, and statins can help."
+        },
+        "HDL": {
+            "unit": "mg/dL",
+            "low": 40.0,
+            "high": 999.0,
+            "deficiency_name": "Low HDL (Good Cholesterol)",
+            "explanation": "Low HDL increases cardiovascular risk. Exercise, healthy fats, and quitting smoking can raise HDL."
+        },
+        "Triglycerides": {
+            "unit": "mg/dL",
+            "low": 0.0,
+            "high": 149.0,
+            "deficiency_name": "High Triglycerides",
+            "explanation": "High triglycerides can result from excess sugar, refined carbs, alcohol, or obesity and increase heart disease risk."
+        },
+        "Creatinine": {
+            "unit": "mg/dL",
+            "low": 0.6,
+            "high": 1.2,
+            "deficiency_name": "Abnormal Creatinine",
+            "explanation": "High creatinine may indicate kidney dysfunction. Low creatinine can be associated with low muscle mass."
+        },
+        "eGFR": {
+            "unit": "mL/min/1.73m2",
+            "low": 60.0,
+            "high": 999.0,
+            "deficiency_name": "Low eGFR (Kidney Function)",
+            "explanation": "Low eGFR indicates reduced kidney filtration capacity. Values below 60 suggest chronic kidney disease."
+        },
+        "Urea": {
+            "unit": "mg/dL",
+            "low": 7.0,
+            "high": 25.0,
+            "deficiency_name": "Abnormal Blood Urea",
+            "explanation": "Elevated urea can indicate kidney impairment or high protein intake. Low values may reflect malnutrition."
+        },
+        "Sodium": {
+            "unit": "mEq/L",
+            "low": 136.0,
+            "high": 145.0,
+            "deficiency_name": "Sodium Imbalance",
+            "explanation": "Abnormal sodium levels can cause neurological symptoms. May result from dehydration, kidney issues, or medications."
+        },
+        "Potassium": {
+            "unit": "mEq/L",
+            "low": 3.5,
+            "high": 5.0,
+            "deficiency_name": "Potassium Imbalance",
+            "explanation": "Low potassium (hypokalemia) causes muscle weakness; high potassium (hyperkalemia) can affect heart rhythm."
+        },
+        "Calcium": {
+            "unit": "mg/dL",
+            "low": 8.5,
+            "high": 10.5,
+            "deficiency_name": "Calcium Imbalance",
+            "explanation": "Low calcium can cause muscle cramps and bone loss. High calcium may indicate parathyroid issues or excess supplementation."
+        },
+        "Vitamin D": {
+            "unit": "ng/mL",
+            "low": 30.0,
+            "high": 100.0,
+            "deficiency_name": "Vitamin D Deficiency",
+            "explanation": "Vitamin D deficiency is very common. It affects bone health, immune function, and mood. Sunlight and supplementation help."
+        },
+        "Vitamin B12": {
+            "unit": "pg/mL",
+            "low": 200.0,
+            "high": 900.0,
+            "deficiency_name": "Vitamin B12 Deficiency",
+            "explanation": "B12 deficiency causes fatigue, nerve damage, and anemia. At risk: vegetarians/vegans and older adults."
+        },
+        "Iron": {
+            "unit": "µg/dL",
+            "low": 60.0,
+            "high": 170.0,
+            "deficiency_name": "Iron Deficiency",
+            "explanation": "Iron deficiency impairs oxygen transport (anemia). Common in menstruating women, pregnant women, and those with poor diet."
+        },
+        "Ferritin": {
+            "unit": "ng/mL",
+            "low": 12.0,
+            "high": 300.0,
+            "deficiency_name": "Low Ferritin (Iron Stores)",
+            "explanation": "Ferritin measures stored iron. Low ferritin is the earliest sign of iron depletion, before anemia develops."
+        },
+        "TSH": {
+            "unit": "mIU/L",
+            "low": 0.4,
+            "high": 4.0,
+            "deficiency_name": "Thyroid Dysfunction",
+            "explanation": "High TSH may indicate hypothyroidism (underactive thyroid); low TSH may indicate hyperthyroidism."
+        },
+        "ALT": {
+            "unit": "U/L",
+            "low": 0.0,
+            "high": 56.0,
+            "deficiency_name": "Elevated ALT (Liver Enzyme)",
+            "explanation": "Elevated ALT indicates liver stress or damage. Causes include fatty liver, hepatitis, medications, or alcohol."
+        },
+        "AST": {
+            "unit": "U/L",
+            "low": 0.0,
+            "high": 40.0,
+            "deficiency_name": "Elevated AST (Liver Enzyme)",
+            "explanation": "Elevated AST can indicate liver or heart muscle damage. Often evaluated alongside ALT."
+        }
+    }
+}

@@ -1,388 +1,136 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import PageHeader from "@/components/common/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
 import { Badge } from "@/components/ui/Badge";
-import { RiskGauge } from "@/components/common/RiskGauge";
-import { CalendarClock, Phone, Globe, PersonStanding, Search, Download, Bell } from "lucide-react";
+import { CalendarClock, X, AlertCircle } from "lucide-react";
+import apiClient from "@/lib/apiClient";
 
-import { api } from "@/lib/api";
-import type { Appointment } from "@/lib/types";
-
-type RiskLevel = "Low" | "Medium" | "High";
-
-function riskLevel(score: number): RiskLevel {
-  if (score < 0.25) return "Low";
-  if (score < 0.6) return "Medium";
-  return "High";
-}
-
-function riskBadge(score: number) {
-  const lvl = riskLevel(score);
-  const variant = lvl === "Low" ? "green" : lvl === "Medium" ? "amber" : "red";
-  return <Badge variant={variant}>{lvl}</Badge>;
-}
-
-function channelIcon(ch: Appointment["channel"]) {
-  if (ch === "Online") return <Globe size={14} />;
-  if (ch === "Phone") return <Phone size={14} />;
-  return <PersonStanding size={14} />;
-}
+type Doctor = { user_id: string; name: string; specialization: string };
+type Slot = { datetime: string; available: boolean };
+type Appointment = { id: string; doctor_id: string; doctor_name: string; specialization: string; slot_datetime: string; status: string };
 
 export default function Appointments() {
-  // Form state
-  const [channel, setChannel] = useState<Appointment["channel"]>("Online");
-  const [leadDays, setLeadDays] = useState(5);
-  const [score, setScore] = useState(0.2);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [bookingSlot, setBookingSlot] = useState<string | null>(null);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  // Data state
-  const [rows, setRows] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [confirmingId, setConfirmingId] = useState<string | null>(null);
+  function reload() {
+    apiClient.get("/doctors").then(r => setDoctors(r.data)).catch(() => { });
+    apiClient.get("/appointments").then(r => setAppointments(r.data)).catch(() => { });
+  }
 
-  const [q, setQ] = useState("");
-
-  // Load from API
+  useEffect(() => { reload(); }, []);
   useEffect(() => {
-    let alive = true;
-    (async () => {
-      setLoading(true);
-      const data = await api.listAppointments();
-      if (!alive) return;
-      setRows(data);
-      setLoading(false);
-    })();
-    return () => {
-      alive = false;
-    };
-  }, []);
+    if (!selectedDoctor) { setSlots([]); return; }
+    setLoadingSlots(true);
+    apiClient.get(`/appointments/slots?doctor_id=${selectedDoctor.user_id}`)
+      .then(r => setSlots(r.data)).catch(() => { })
+      .finally(() => setLoadingSlots(false));
+  }, [selectedDoctor]);
 
-  const recommendation = useMemo(() => {
-    if (score < 0.25) return ["1 reminder (24 hrs)"];
-    if (score < 0.6) return ["24 hrs", "2 hrs"];
-    return ["48 hrs", "24 hrs", "2 hrs", "Call follow-up"];
-  }, [score]);
-
-  const drivers = useMemo(() => {
-    const d: string[] = [];
-    if (leadDays >= 7) d.push("Long lead time");
-    if (leadDays <= 1) d.push("Very short notice");
-    if (channel === "Phone") d.push("Phone booking");
-    if (channel === "Walk-in") d.push("Walk-in booking");
-    if (d.length === 0) d.push("Stable pattern");
-    return d;
-  }, [leadDays, channel]);
-
-  const filtered = useMemo(() => {
-    const t = q.trim().toLowerCase();
-    if (!t) return rows;
-    return rows.filter((r) => `${r.patientName} ${r.id} ${r.when}`.toLowerCase().includes(t));
-  }, [rows, q]);
-
-  const kpis = useMemo(() => {
-    const total = rows.length;
-    const predictedNoShow = rows.filter((r) => r.noShowScore >= 0.6).length;
-    const confirmed = rows.filter((r) => r.status === "Confirmed").length;
-    return { total, predictedNoShow, confirmed };
-  }, [rows]);
-
-  function predictDemo() {
-    let base = 0.15 + Math.min(0.5, leadDays * 0.03);
-    if (channel === "Phone") base += 0.05;
-    if (channel === "Walk-in") base += 0.08;
-    base = Math.max(0.05, Math.min(0.95, base + (Math.random() - 0.5) * 0.1));
-    setScore(Number(base.toFixed(2)));
-  }
-
-  async function saveToQueue() {
-    setSaving(true);
+  async function book(slotDt: string) {
+    if (!selectedDoctor) return;
+    setBookingSlot(slotDt); setError(null);
     try {
-      const newRow = await api.createAppointment({
-        patientId: "P-001",
-        patientName: "New Patient (demo)",
-        when: `${leadDays <= 1 ? "Tomorrow" : `In ${leadDays} days`} • 11:00 AM`,
-        channel,
-        status: "Pending",
-        noShowScore: score,
-      });
-      setRows((prev) => [newRow, ...prev]);
-    } finally {
-      setSaving(false);
-    }
+      await apiClient.post("/appointments/book", { doctor_id: selectedDoctor.user_id, slot_datetime: slotDt });
+      reload();
+      setSelectedDoctor(null);
+    } catch (e: any) { setError(e?.response?.data?.detail ?? "Booking failed."); }
+    finally { setBookingSlot(null); }
   }
 
-  async function confirmAppt(id: string) {
-    setConfirmingId(id);
+  async function cancel(id: string) {
     try {
-      const updated = await api.confirmAppointment(id);
-      if (!updated) return;
-      setRows((prev) => prev.map((x) => (x.id === id ? updated : x)));
-    } finally {
-      setConfirmingId(null);
-    }
+      await apiClient.post("/appointments/cancel", { appointment_id: id });
+      reload();
+    } catch (e: any) { alert(e?.response?.data?.detail ?? "Cancellation failed."); }
   }
+
+  const grouped = slots.reduce<Record<string, Slot[]>>((acc, s) => {
+    const day = s.datetime.split("T")[0];
+    if (!acc[day]) acc[day] = [];
+    acc[day].push(s);
+    return acc;
+  }, {});
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Appointments & No-Show"
-        subtitle="Predict no-show risk and generate a reminder plan (API-ready demo)."
-      />
+      <PageHeader title="Appointments" subtitle="Book consultations with available doctors." />
 
-      {/* KPI strip */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="text-xs font-medium text-slate-600">Appointments in queue</div>
-            <CalendarClock size={16} className="text-slate-700" />
-          </div>
-          <div className="mt-2 text-2xl font-semibold text-slate-900">
-            {loading ? "…" : kpis.total}
-          </div>
-          <div className="mt-1 text-xs text-slate-500">From api.listAppointments()</div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="text-xs font-medium text-slate-600">High risk no-shows</div>
-            <Badge variant={!loading && kpis.predictedNoShow > 0 ? "red" : "green"}>
-              {!loading && kpis.predictedNoShow > 0 ? "Attention" : "OK"}
-            </Badge>
-          </div>
-          <div className="mt-2 text-2xl font-semibold text-slate-900">
-            {loading ? "…" : kpis.predictedNoShow}
-          </div>
-          <div className="mt-1 text-xs text-slate-500">Score ≥ 0.60</div>
-        </div>
-
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="text-xs font-medium text-slate-600">Confirmed</div>
-            <Badge variant="green">Live</Badge>
-          </div>
-          <div className="mt-2 text-2xl font-semibold text-slate-900">
-            {loading ? "…" : kpis.confirmed}
-          </div>
-          <div className="mt-1 text-xs text-slate-500">Feedback loop effect</div>
-        </div>
-      </div>
-
-      {/* Main grid */}
-      <div className="grid gap-4 lg:grid-cols-2">
-        {/* Create */}
-        <Card className="rounded-2xl border-slate-200 bg-white shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-base">Create Appointment</CardTitle>
-            <CardDescription>Predict risk + save to queue (API-backed demo).</CardDescription>
-          </CardHeader>
-
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs font-medium text-slate-600">Date</label>
-                <Input type="date" />
+      {/* My Appointments */}
+      {appointments.length > 0 && (
+        <Card className="rounded-2xl border-slate-200 shadow-sm">
+          <CardHeader><CardTitle className="text-base">My Appointments</CardTitle></CardHeader>
+          <CardContent className="space-y-2">
+            {appointments.map(a => (
+              <div key={a.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <div>
+                  <div className="font-semibold text-slate-900 text-sm">{a.doctor_name}</div>
+                  <div className="text-xs text-slate-500">{a.specialization}</div>
+                  <div className="text-xs text-slate-600 mt-0.5">{new Date(a.slot_datetime).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant={a.status === "confirmed" ? "green" : "amber"}>{a.status}</Badge>
+                  {a.status === "confirmed" && (
+                    <button onClick={() => cancel(a.id)} className="rounded-full border border-red-200 bg-white p-1.5 text-red-500 hover:bg-red-50 transition"><X size={12} /></button>
+                  )}
+                </div>
               </div>
-              <div>
-                <label className="text-xs font-medium text-slate-600">Time</label>
-                <Input type="time" />
-              </div>
-
-              <div>
-                <label className="text-xs font-medium text-slate-600">Booking Channel</label>
-                <Select value={channel} onChange={(e) => setChannel(e.target.value as any)}>
-                  <option>Online</option>
-                  <option>Phone</option>
-                  <option>Walk-in</option>
-                </Select>
-              </div>
-
-              <div>
-                <label className="text-xs font-medium text-slate-600">Days until appointment</label>
-                <Input
-                  type="number"
-                  value={leadDays}
-                  min={0}
-                  onChange={(e) => setLeadDays(Number(e.target.value))}
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              <Button onClick={predictDemo}>Predict No-Show (Demo)</Button>
-              <Button variant="secondary" onClick={saveToQueue} disabled={saving}>
-                {saving ? "Saving…" : "Save to Queue"}
-              </Button>
-              <Button variant="secondary" disabled>
-                <Download size={16} className="mr-2" />
-                Export
-              </Button>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div className="text-sm font-semibold text-slate-900">Why this score?</div>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {drivers.map((d) => (
-                  <span
-                    key={d}
-                    className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-700"
-                  >
-                    {d}
-                  </span>
-                ))}
-              </div>
-              <div className="mt-2 text-xs text-slate-500">
-                Later: show SHAP-style drivers from your ML endpoint.
-              </div>
-            </div>
+            ))}
           </CardContent>
         </Card>
+      )}
 
-        {/* Result */}
-        <Card className="rounded-2xl border-slate-200 bg-white shadow-sm">
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div>
-              <CardTitle className="text-base">No-Show Result</CardTitle>
-              <CardDescription>Probability + reminder plan (demo UI).</CardDescription>
-            </div>
-            {riskBadge(score)}
-          </CardHeader>
-
-          <CardContent className="space-y-4">
-            <RiskGauge value={score} />
-
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div className="flex items-center justify-between">
-                <div className="font-semibold text-slate-900">Recommended Reminders</div>
-                <Badge variant="blue">Automation-ready</Badge>
-              </div>
-
-              <div className="mt-2 flex flex-wrap gap-2">
-                {recommendation.map((r) => (
-                  <Badge key={r} variant="blue">
-                    {r}
-                  </Badge>
-                ))}
-              </div>
-
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Button size="sm" disabled>
-                  <Bell size={16} className="mr-2" />
-                  Send reminders (demo)
-                </Button>
-                <Button size="sm" variant="secondary" disabled>
-                  Mark confirmed
-                </Button>
-              </div>
-
-              <div className="mt-3 text-xs text-slate-500">
-                Later: hook to SMS/WhatsApp/Email service.
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Queue table */}
-      <Card className="rounded-2xl border-slate-200 bg-white shadow-sm">
-        <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div>
-            <CardTitle className="text-base">Appointment Queue</CardTitle>
-            <CardDescription>Search + triage to reduce no-shows</CardDescription>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <Input
-                className="pl-9 w-72"
-                placeholder="Search patient / id / day..."
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-              />
-            </div>
-            <Button size="sm" variant="secondary" disabled>
-              <Download size={16} className="mr-2" />
-              Export
-            </Button>
-          </div>
+      {/* Doctor Selection */}
+      <Card className="rounded-2xl border-slate-200 shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-base">Book an Appointment</CardTitle>
+          <CardDescription>Select a doctor, then choose an available time slot</CardDescription>
         </CardHeader>
-
-        <CardContent>
-          <div className="overflow-hidden rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-slate-600">
-                <tr>
-                  <th className="px-4 py-3 text-left font-medium">Patient</th>
-                  <th className="px-4 py-3 text-left font-medium">When</th>
-                  <th className="px-4 py-3 text-left font-medium">Channel</th>
-                  <th className="px-4 py-3 text-left font-medium">Status</th>
-                  <th className="px-4 py-3 text-left font-medium">No-show</th>
-                  <th className="px-4 py-3 text-left font-medium">Action</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan={6} className="px-4 py-10 text-slate-500">
-                      Loading appointments…
-                    </td>
-                  </tr>
-                ) : (
-                  <>
-                    {filtered.map((r) => (
-                      <tr key={r.id} className="border-t border-slate-200 hover:bg-slate-50">
-                        <td className="px-4 py-3">
-                          <div className="font-semibold text-slate-900">{r.patientName}</div>
-                          <div className="text-xs text-slate-500">{r.id}</div>
-                        </td>
-                        <td className="px-4 py-3">{r.when}</td>
-                        <td className="px-4 py-3">
-                          <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-700">
-                            {channelIcon(r.channel)} {r.channel}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <Badge variant={r.status === "Confirmed" ? "green" : "amber"}>{r.status}</Badge>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            {riskBadge(r.noShowScore)}
-                            <span className="text-xs text-slate-600">{Math.round(r.noShowScore * 100)}%</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => confirmAppt(r.id)}
-                            disabled={confirmingId === r.id || r.status === "Confirmed"}
-                          >
-                            {confirmingId === r.id ? "Confirming…" : "Confirm"}
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-
-                    {filtered.length === 0 ? (
-                      <tr className="border-t border-slate-200">
-                        <td className="px-4 py-6 text-slate-500" colSpan={6}>
-                          No appointments match your search.
-                        </td>
-                      </tr>
-                    ) : null}
-                  </>
-                )}
-              </tbody>
-            </table>
+        <CardContent className="space-y-4">
+          <div>
+            <div className="text-xs font-medium text-slate-700 mb-2">Choose a doctor</div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {doctors.map(d => (
+                <button key={d.user_id} type="button" onClick={() => setSelectedDoctor(selectedDoctor?.user_id === d.user_id ? null : d)}
+                  className={["rounded-xl border p-3 text-left transition-all", selectedDoctor?.user_id === d.user_id ? "border-blue-500 bg-blue-50" : "border-slate-200 bg-white hover:bg-slate-50"].join(" ")}>
+                  <div className="font-semibold text-sm text-slate-900">{d.name}</div>
+                  <div className="text-xs text-slate-500">{d.specialization}</div>
+                </button>
+              ))}
+              {doctors.length === 0 && <div className="text-sm text-slate-500 col-span-2">No doctors registered yet.</div>}
+            </div>
           </div>
 
-          <div className="mt-3 text-xs text-slate-500">
-            This page now consumes a centralized demo API layer (easy to swap with FastAPI later).
-          </div>
+          {selectedDoctor && (
+            <div>
+              <div className="text-xs font-medium text-slate-700 mb-2">Available slots — {selectedDoctor.name}</div>
+              {loadingSlots ? <div className="text-sm text-slate-500">Loading slots…</div> : (
+                <div className="space-y-3">
+                  {Object.entries(grouped).map(([day, daySlots]) => (
+                    <div key={day}>
+                      <div className="text-xs font-medium text-slate-600 mb-1.5">{new Date(day).toLocaleDateString("en-IN", { weekday: "long", dateStyle: "medium" })}</div>
+                      <div className="flex flex-wrap gap-2">
+                        {daySlots.map(s => (
+                          <button key={s.datetime} disabled={!s.available || bookingSlot === s.datetime} onClick={() => book(s.datetime)}
+                            className={["rounded-xl border px-3 py-1.5 text-xs font-medium transition-all", s.available ? "border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100" : "border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed line-through"].join(" ")}>
+                            {new Date(s.datetime).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {error && <div className="flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700"><AlertCircle size={14} />{error}</div>}
         </CardContent>
       </Card>
     </div>

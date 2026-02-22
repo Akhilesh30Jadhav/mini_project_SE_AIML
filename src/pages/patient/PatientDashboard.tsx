@@ -1,271 +1,119 @@
+import { useEffect, useState } from "react";
 import PageHeader from "@/components/common/PageHeader";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/Card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
-import {
-  Activity,
-  CalendarClock,
-  FileText,
-  ShieldCheck,
-} from "lucide-react";
+import { ResponsiveContainer, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
+import { Activity, CalendarClock, HeartPulse, Brain, Pill, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
-import { formatPct } from "@/lib/utils";
-import type { LucideIcon } from "lucide-react";
+import apiClient from "@/lib/apiClient";
+import { getAuth } from "@/features/auth/auth.store";
 
+type Summary = {
+  deficiency_count: number;
+  lifestyle_score: number | null;
+  lifestyle_category: string | null;
+  last_triage: string | null;
+  last_phq9_severity: string | null;
+  last_gad7_severity: string | null;
+  last_chronic_flagged: boolean | null;
+  last_chronic_flag_label: string | null;
+  next_appointment: { slot_datetime: string; doctor_name: string } | null;
+};
 
-/* -------------------- Demo Data -------------------- */
+const TRIAGE_VARIANT: Record<string, "green" | "amber" | "red"> = { Low: "green", Medium: "amber", High: "red" };
+const SEVERITY_VARIANT: Record<string, "green" | "blue" | "amber" | "red"> = {
+  "Minimal or None": "green", "Mild": "blue", "Moderate": "amber",
+  "Moderately Severe": "amber", "Severe": "red",
+};
 
-const trend = [
-  { day: "Mon", risk: 0.33 },
-  { day: "Tue", risk: 0.38 },
-  { day: "Wed", risk: 0.41 },
-  { day: "Thu", risk: 0.45 },
-  { day: "Fri", risk: 0.43 },
-  { day: "Sat", risk: 0.4 },
-  { day: "Sun", risk: 0.41 },
-];
+export default function PatientDashboard() {
+  const [summary, setSummary] = useState<Summary | null>(null);
+  const [loading, setLoading] = useState(true);
+  const auth = getAuth();
 
-const appts = [
-  { time: "10:30 AM", doctor: "Dr. Mehta", type: "Follow-up", status: "Confirmed" },
-  { time: "12:15 PM", doctor: "Dr. Rao", type: "Lab review", status: "Pending" },
-  { time: "04:00 PM", doctor: "Dr. Singh", type: "Consult", status: "Confirmed" },
-];
+  useEffect(() => {
+    apiClient.get("/patient/dashboard/summary")
+      .then(r => setSummary(r.data))
+      .catch(() => setSummary(null))
+      .finally(() => setLoading(false));
+  }, []);
 
-const activityLog = [
-  {
-    title: "Risk prediction updated",
-    meta: "Diabetes risk: 41% • Key driver: glucose",
-    badge: { label: "Clinical", variant: "blue" as const },
-  },
-  {
-    title: "Report analyzed",
-    meta: "CBC report uploaded • 2 abnormal flags",
-    badge: { label: "Docs", variant: "amber" as const },
-  },
-  {
-    title: "No-show insights generated",
-    meta: "Probability: 18% • Reminder plan suggested",
-    badge: { label: "Ops", variant: "green" as const },
-  },
-];
+  const kpis = summary ? [
+    { icon: Pill, label: "Deficiencies detected", value: summary.deficiency_count > 0 ? `${summary.deficiency_count} flagged` : "None", badge: summary.deficiency_count > 0 ? { label: "Review", variant: "amber" as const } : { label: "Clear", variant: "green" as const }, link: "/patient/labs" },
+    { icon: Activity, label: "Lifestyle score", value: summary.lifestyle_score !== null ? `${summary.lifestyle_score}/100` : "Not assessed", badge: summary.lifestyle_category ? { label: summary.lifestyle_category, variant: "blue" as const } : undefined, link: "/patient/lifestyle" },
+    { icon: Zap, label: "Last triage level", value: summary.last_triage ?? "Not checked", badge: summary.last_triage ? { label: summary.last_triage, variant: TRIAGE_VARIANT[summary.last_triage] ?? "default" } : undefined, link: "/patient/symptoms" },
+    { icon: Brain, label: "PHQ-9 severity", value: summary.last_phq9_severity ?? "Not assessed", badge: summary.last_phq9_severity ? { label: "Assessed", variant: SEVERITY_VARIANT[summary.last_phq9_severity] ?? "default" } : undefined, link: "/patient/mental" },
+    { icon: HeartPulse, label: "Blood pressure", value: summary.last_chronic_flag_label ?? "Not logged", badge: summary.last_chronic_flagged !== null ? { label: summary.last_chronic_flagged ? "Flagged" : "Normal", variant: summary.last_chronic_flagged ? "red" as const : "green" as const } : undefined, link: "/patient/chronic" },
+    { icon: CalendarClock, label: "Next appointment", value: summary.next_appointment ? new Date(summary.next_appointment.slot_datetime).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : "None booked", badge: summary.next_appointment ? { label: "Confirmed", variant: "green" as const } : undefined, link: "/patient/appointments" },
+  ] : [];
 
-/* -------------------- Components -------------------- */
-function KPI({
-  icon: Icon,
-  label,
-  value,
-  badge,
-}: {
-  icon: LucideIcon;
-  label: string;
-  value: string;
-  badge?: {
-    label: string;
-    variant: "green" | "amber" | "red" | "blue" | "default";
-  };
-}) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-slate-50">
-            <Icon size={18} className="text-slate-900" />
-          </div>
-          <div>
-            <div className="text-xs font-medium text-slate-600">{label}</div>
-            <div className="mt-1 text-2xl font-semibold text-slate-900">
-              {value}
-            </div>
-          </div>
-        </div>
+  const featureLinks = [
+    { to: "/patient/labs", label: "Lab Reports", desc: "Enter & analyze lab values", icon: "🧪" },
+    { to: "/patient/lifestyle", label: "Lifestyle Score", desc: "Assess your daily habits", icon: "🏃" },
+    { to: "/patient/symptoms", label: "Symptom Checker", desc: "Get a triage assessment", icon: "🩺" },
+    { to: "/patient/mental", label: "Mental Wellness", desc: "PHQ-9 & GAD-7 assessments", icon: "🧠" },
+    { to: "/patient/chronic", label: "Blood Pressure", desc: "Track your BP readings", icon: "❤️" },
+    { to: "/patient/diet", label: "Diet Plan", desc: "Personalized meal plan", icon: "🥗" },
+    { to: "/patient/appointments", label: "Appointments", desc: "Book & manage slots", icon: "📅" },
+    { to: "/patient/chatbot", label: "Health Chat", desc: "Ask your AI assistant", icon: "💬" },
+  ];
 
-        {badge && <Badge variant={badge.variant}>{badge.label}</Badge>}
-      </div>
-
-      <div className="mt-2 text-xs text-slate-500">
-        Demo KPI • replace with API later
-      </div>
-    </div>
-  );
-}
-
-
-
-/* -------------------- PAGE (DEFAULT EXPORT) -------------------- */
-
-export default function PatientDetail() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Patient Dashboard"
-        subtitle="Your clinical overview: risk, reports, appointments, and history."
+        title={`Welcome, ${auth.name ?? "Patient"}`}
+        subtitle="Your personalised health overview. All insights are for informational purposes only."
       />
 
-      {/* KPIs */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <KPI
-          icon={Activity}
-          label="Current risk score"
-          value="0.41"
-          badge={{ label: "Stable", variant: "blue" }}
-        />
-        <KPI
-          icon={FileText}
-          label="Reports analyzed"
-          value="3"
-          badge={{ label: "This week", variant: "amber" }}
-        />
-        <KPI
-          icon={CalendarClock}
-          label="Next appointment"
-          value="10:30 AM"
-          badge={{ label: "Today", variant: "green" }}
-        />
-        <KPI
-          icon={ShieldCheck}
-          label="Profile status"
-          value="Complete"
-          badge={{ label: "Verified", variant: "green" }}
-        />
-      </div>
-
-      {/* Main Grid */}
-      <div className="grid gap-4 lg:grid-cols-3">
-        {/* Risk Trend */}
-        <Card className="lg:col-span-2 rounded-2xl border-slate-200 bg-white shadow-sm">
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div>
-              <CardTitle className="text-base">Risk Trend</CardTitle>
-              <CardDescription>
-                7-day trend for monitoring changes
-              </CardDescription>
-            </div>
-            <div className="flex gap-2">
-              <Link to="/patient/risk">
-                <Button size="sm">View details</Button>
-              </Link>
-              <Link to="/patient/history">
-                <Button size="sm" variant="secondary">
-                  History
-                </Button>
-              </Link>
-            </div>
-          </CardHeader>
-          <CardContent className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={trend}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis
-                  domain={[0, 1]}
-                  tickFormatter={(v) => `${Math.round(v * 100)}%`}
-                />
-                <Tooltip formatter={(v) => formatPct(Number(v))} />
-                <Line
-                  type="monotone"
-                  dataKey="risk"
-                  strokeWidth={2}
-                  dot={false}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Activity */}
-        <Card className="rounded-2xl border-slate-200 bg-white shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-base">Recent Activity</CardTitle>
-            <CardDescription>What changed recently</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {activityLog.map((a) => (
-              <div
-                key={a.title}
-                className="rounded-xl border border-slate-200 bg-slate-50 p-3"
-              >
-                <div className="flex justify-between gap-3">
-                  <div>
-                    <div className="text-sm font-semibold text-slate-900">
-                      {a.title}
+      {loading ? (
+        <div className="text-center py-12 text-slate-500">Loading your health summary…</div>
+      ) : (
+        <>
+          {/* KPI Grid */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {kpis.map(kpi => (
+              <Link key={kpi.label} to={kpi.link}>
+                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-slate-50">
+                        <kpi.icon size={18} className="text-slate-700" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-medium text-slate-500">{kpi.label}</div>
+                        <div className="mt-0.5 text-base font-semibold text-slate-900">{kpi.value}</div>
+                      </div>
                     </div>
-                    <div className="mt-1 text-xs text-slate-600">
-                      {a.meta}
-                    </div>
+                    {kpi.badge && <Badge variant={kpi.badge.variant}>{kpi.badge.label}</Badge>}
                   </div>
-                  <Badge variant={a.badge.variant}>{a.badge.label}</Badge>
                 </div>
-              </div>
+              </Link>
             ))}
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Appointments */}
-        <Card className="lg:col-span-3 rounded-2xl border-slate-200 bg-white shadow-sm">
-          <CardHeader className="flex justify-between">
-            <div>
-              <CardTitle className="text-base">
-                Upcoming Appointments
-              </CardTitle>
-              <CardDescription>
-                Operational view
-              </CardDescription>
+          {/* Medical Disclaimer */}
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
+            ⚠️ <strong>Medical Disclaimer:</strong> CareSphere provides health information for educational purposes only. It does not diagnose conditions or replace professional medical advice. Always consult a qualified healthcare provider.
+          </div>
+
+          {/* Feature Cards */}
+          <div>
+            <h2 className="mb-3 text-sm font-semibold text-slate-700">Health Modules</h2>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {featureLinks.map(f => (
+                <Link key={f.to} to={f.to}>
+                  <div className="rounded-2xl border border-slate-200 bg-white p-4 hover:shadow-md transition-shadow hover:border-blue-200">
+                    <div className="mb-2 text-2xl">{f.icon}</div>
+                    <div className="font-semibold text-slate-900 text-sm">{f.label}</div>
+                    <div className="mt-1 text-xs text-slate-500">{f.desc}</div>
+                  </div>
+                </Link>
+              ))}
             </div>
-            <Link to="/patient/appointments">
-              <Button size="sm" variant="secondary">
-                Open scheduling
-              </Button>
-            </Link>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-hidden rounded-2xl border border-slate-200">
-              <table className="w-full text-sm">
-                <thead className="bg-slate-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left">Time</th>
-                    <th className="px-4 py-3 text-left">Doctor</th>
-                    <th className="px-4 py-3 text-left">Type</th>
-                    <th className="px-4 py-3 text-left">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {appts.map((a) => (
-                    <tr key={a.time} className="border-t">
-                      <td className="px-4 py-3">{a.time}</td>
-                      <td className="px-4 py-3">{a.doctor}</td>
-                      <td className="px-4 py-3">{a.type}</td>
-                      <td className="px-4 py-3">
-                        <Badge
-                          variant={
-                            a.status === "Confirmed" ? "green" : "amber"
-                          }
-                        >
-                          {a.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

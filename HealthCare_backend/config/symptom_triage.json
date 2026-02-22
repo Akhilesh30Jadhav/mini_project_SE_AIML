@@ -1,0 +1,154 @@
+{
+    "version": "1.0",
+    "symptoms": [
+        {
+            "id": "chest_pain",
+            "label": "Chest pain or tightness",
+            "base_score": 30,
+            "red_flag": true
+        },
+        {
+            "id": "shortness_breath",
+            "label": "Shortness of breath",
+            "base_score": 25,
+            "red_flag": true
+        },
+        {
+            "id": "severe_headache",
+            "label": "Severe or sudden headache",
+            "base_score": 20,
+            "red_flag": true
+        },
+        {
+            "id": "fainting",
+            "label": "Fainting or loss of consciousness",
+            "base_score": 30,
+            "red_flag": true
+        },
+        {
+            "id": "vision_changes",
+            "label": "Sudden vision changes",
+            "base_score": 20,
+            "red_flag": true
+        },
+        {
+            "id": "high_fever",
+            "label": "High fever (>39°C / 102°F)",
+            "base_score": 15
+        },
+        {
+            "id": "severe_pain",
+            "label": "Severe abdominal pain",
+            "base_score": 18,
+            "red_flag": true
+        },
+        {
+            "id": "numbness",
+            "label": "Sudden numbness or weakness",
+            "base_score": 20,
+            "red_flag": true
+        },
+        {
+            "id": "palpitations",
+            "label": "Heart palpitations or irregular heartbeat",
+            "base_score": 15
+        },
+        {
+            "id": "cough",
+            "label": "Persistent cough",
+            "base_score": 8
+        },
+        {
+            "id": "fever",
+            "label": "Mild-moderate fever (37.5–39°C)",
+            "base_score": 8
+        },
+        {
+            "id": "fatigue",
+            "label": "Extreme fatigue or weakness",
+            "base_score": 10
+        },
+        {
+            "id": "nausea",
+            "label": "Nausea or vomiting",
+            "base_score": 8
+        },
+        {
+            "id": "diarrhea",
+            "label": "Diarrhea (more than 3 days)",
+            "base_score": 8
+        },
+        {
+            "id": "joint_pain",
+            "label": "Joint or muscle pain",
+            "base_score": 5
+        },
+        {
+            "id": "rash",
+            "label": "Skin rash or unusual redness",
+            "base_score": 7
+        },
+        {
+            "id": "sore_throat",
+            "label": "Sore throat",
+            "base_score": 5
+        },
+        {
+            "id": "ear_pain",
+            "label": "Ear pain",
+            "base_score": 5
+        },
+        {
+            "id": "headache",
+            "label": "Mild-moderate headache",
+            "base_score": 6
+        },
+        {
+            "id": "back_pain",
+            "label": "Back pain",
+            "base_score": 5
+        },
+        {
+            "id": "dizziness",
+            "label": "Dizziness or lightheadedness",
+            "base_score": 8
+        },
+        {
+            "id": "urinary_pain",
+            "label": "Pain or burning during urination",
+            "base_score": 10
+        }
+    ],
+    "follow_up_multipliers": {
+        "severity": {
+            "1": 0.5,
+            "2": 0.75,
+            "3": 1.0,
+            "4": 1.25,
+            "5": 1.5
+        },
+        "duration_days": {
+            "less_than_1": 0.8,
+            "1_to_3": 1.0,
+            "more_than_3": 1.3,
+            "more_than_7": 1.6
+        }
+    },
+    "triage_thresholds": {
+        "low": {
+            "max": 20
+        },
+        "medium": {
+            "min": 21,
+            "max": 49
+        },
+        "high": {
+            "min": 50
+        }
+    },
+    "guidance": {
+        "Low": "Your symptoms appear mild. Monitor for changes. Rest, hydrate, and take OTC medication if appropriate. Consult a doctor if symptoms persist beyond 3 days.",
+        "Medium": "Your symptoms warrant a doctor's evaluation soon. Please book an appointment within 24–48 hours. Avoid self-medicating without professional advice.",
+        "High": "Your symptoms may indicate a serious condition. Please seek medical attention immediately or go to the nearest emergency room. Do not delay."
+    }
+}

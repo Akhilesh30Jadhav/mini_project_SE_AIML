@@ -1,0 +1,305 @@
+{
+    "version": "1.0",
+    "deficiency_foods": {
+        "Anemia / Low Hemoglobin": {
+            "recommend": [
+                "Spinach",
+                "Lentils",
+                "Red meat (lean)",
+                "Beetroot",
+                "Pomegranate",
+                "Tofu",
+                "Fortified cereals",
+                "Dark leafy greens"
+            ],
+            "avoid": [
+                "Coffee and tea with meals",
+                "Calcium-rich foods near iron-rich meals",
+                "High-fiber foods in excess"
+            ],
+            "supplement_note": "Iron supplementation may be recommended by your doctor."
+        },
+        "Iron Deficiency": {
+            "recommend": [
+                "Red meat (lean)",
+                "Chicken",
+                "Fish",
+                "Lentils",
+                "Beans",
+                "Spinach",
+                "Pumpkin seeds",
+                "Quinoa"
+            ],
+            "avoid": [
+                "Coffee and tea with meals",
+                "Milk near iron-rich meals"
+            ],
+            "supplement_note": "Iron supplements (ferrous sulfate) as directed by your doctor."
+        },
+        "Low Ferritin (Iron Stores)": {
+            "recommend": [
+                "Iron-rich legumes",
+                "Dark leafy vegetables",
+                "Fortified cereals",
+                "Red meat",
+                "Tofu"
+            ],
+            "avoid": [
+                "Excessive dairy near iron-rich meals",
+                "Coffee/tea close to meals"
+            ],
+            "supplement_note": "Discuss IV iron or oral iron supplements with your doctor if ferritin is very low."
+        },
+        "Vitamin D Deficiency": {
+            "recommend": [
+                "Fatty fish (salmon, mackerel, sardines)",
+                "Egg yolks",
+                "Fortified milk and cereals",
+                "Mushrooms (sun-exposed)",
+                "Cod liver oil"
+            ],
+            "avoid": [
+                "Excess processed foods low in nutrients"
+            ],
+            "supplement_note": "Vitamin D3 supplementation (1000–4000 IU/day) often recommended. Get moderate sun exposure."
+        },
+        "Vitamin B12 Deficiency": {
+            "recommend": [
+                "Meat and poultry",
+                "Fish (salmon, tuna)",
+                "Dairy products",
+                "Eggs",
+                "Fortified plant-based milks",
+                "Nutritional yeast"
+            ],
+            "avoid": [
+                "Heavy alcohol consumption (depletes B12)"
+            ],
+            "supplement_note": "B12 supplements (methylcobalamin) or B12 injections for severe deficiency."
+        },
+        "Calcium Imbalance": {
+            "recommend": [
+                "Milk and dairy products",
+                "Fortified plant milk",
+                "Green leafy vegetables (kale, bok choy)",
+                "Almonds",
+                "Sardines with bones",
+                "Tofu"
+            ],
+            "avoid": [
+                "Excess caffeine",
+                "High-sodium foods (causes calcium excretion)",
+                "Oxalate-rich foods in excess (spinach, rhubarb)"
+            ],
+            "supplement_note": "Calcium supplements should be taken with Vitamin D for better absorption."
+        },
+        "Abnormal Fasting Glucose": {
+            "recommend": [
+                "Whole grains (oats, quinoa)",
+                "Non-starchy vegetables",
+                "Legumes",
+                "Nuts and seeds",
+                "Lean proteins",
+                "Berries (low glycemic)"
+            ],
+            "avoid": [
+                "Sugary drinks",
+                "White bread and refined carbs",
+                "Sweets and pastries",
+                "Fruit juices",
+                "Fried foods"
+            ],
+            "supplement_note": "Chromium and magnesium may support blood sugar. Consult doctor before supplements."
+        },
+        "Elevated HbA1c": {
+            "recommend": [
+                "Low glycemic index foods",
+                "Fiber-rich vegetables",
+                "Whole grains",
+                "Fatty fish",
+                "Legumes",
+                "Apple cider vinegar (moderation)"
+            ],
+            "avoid": [
+                "Sugary foods and beverages",
+                "White rice and refined flour",
+                "Processed snacks",
+                "High-fat meats"
+            ],
+            "supplement_note": "Work with your doctor on a diabetes management plan including diet, exercise, and medication."
+        },
+        "High Cholesterol": {
+            "recommend": [
+                "Oats and barley",
+                "Fatty fish (omega-3)",
+                "Nuts (walnuts, almonds)",
+                "Olive oil",
+                "Avocado",
+                "Beans and lentils",
+                "Fruits (apples, grapes, strawberries)"
+            ],
+            "avoid": [
+                "Trans fats (partially hydrogenated oils)",
+                "Saturated fats (full-fat dairy, fatty meats)",
+                "Fried foods",
+                "Processed snacks"
+            ],
+            "supplement_note": "Plant sterols/stanols and omega-3 supplements may help. Statins if prescribed."
+        },
+        "High LDL (Bad Cholesterol)": {
+            "recommend": [
+                "Soluble fiber foods (oats, psyllium)",
+                "Fatty fish",
+                "Soy protein",
+                "Nuts",
+                "Olive oil"
+            ],
+            "avoid": [
+                "Saturated and trans fats",
+                "Red meat excess",
+                "Full-fat dairy",
+                "Coconut oil"
+            ],
+            "supplement_note": "Red yeast rice or omega-3 supplements (doctor guidance). Statin if prescribed."
+        },
+        "Low HDL (Good Cholesterol)": {
+            "recommend": [
+                "Olive oil",
+                "Fatty fish",
+                "Nuts",
+                "Avocado",
+                "Whole grains",
+                "Purple produce (berries, eggplant)"
+            ],
+            "avoid": [
+                "Trans fats",
+                "Smoking",
+                "Sedentary lifestyle",
+                "High-sugar foods"
+            ],
+            "supplement_note": "Niacin (B3) may raise HDL. Consult your doctor."
+        },
+        "High Triglycerides": {
+            "recommend": [
+                "Fatty fish (omega-3 rich)",
+                "Whole grains",
+                "Non-starchy vegetables",
+                "Nuts and seeds",
+                "Legumes"
+            ],
+            "avoid": [
+                "Refined carbs and sugar",
+                "Alcohol",
+                "Fruit juices",
+                "White bread, pasta"
+            ],
+            "supplement_note": "Omega-3 fish oil supplements can lower triglycerides."
+        },
+        "Thyroid Dysfunction": {
+            "recommend": [
+                "Iodine-rich foods (seafood, iodized salt)",
+                "Selenium-rich Brazil nuts",
+                "Zinc-rich foods (pumpkin seeds, legumes)",
+                "Antioxidant-rich vegetables"
+            ],
+            "avoid": [
+                "Raw cruciferous vegetables in large amounts (if hypothyroid)",
+                "Soy products in excess",
+                "Gluten (if Hashimoto's)"
+            ],
+            "supplement_note": "Do not self-treat thyroid conditions. Medical management required."
+        },
+        "Elevated ALT (Liver Enzyme)": {
+            "recommend": [
+                "Leafy greens",
+                "Coffee (moderate)",
+                "Turmeric",
+                "Garlic",
+                "Olive oil",
+                "Blueberries",
+                "Whole grains"
+            ],
+            "avoid": [
+                "Alcohol",
+                "Fried and processed foods",
+                "High-fructose corn syrup",
+                "Excess red meat"
+            ],
+            "supplement_note": "Milk thistle may support liver health. Avoid supplements metabolized by the liver without doctor approval."
+        },
+        "Low White Blood Cells": {
+            "recommend": [
+                "Zinc-rich foods (seeds, legumes)",
+                "Vitamin C rich foods (citrus, peppers)",
+                "Garlic",
+                "Ginger",
+                "Protein-rich foods",
+                "Mushrooms (immune support)"
+            ],
+            "avoid": [
+                "Raw/undercooked meats and eggs (infection risk)"
+            ],
+            "supplement_note": "Zinc, Vitamin C, and Echinacea may support immunity. Consult your doctor."
+        },
+        "Potassium Imbalance": {
+            "recommend": [
+                "Bananas",
+                "Oranges",
+                "Potatoes",
+                "Spinach",
+                "Beans",
+                "Avocado",
+                "Yogurt"
+            ],
+            "avoid": [
+                "Salt substitutes (high potassium if hyperkalemic)",
+                "Excessive potassium supplements without monitoring"
+            ],
+            "supplement_note": "Potassium levels must be monitored carefully, especially if on diuretics or kidney medication."
+        }
+    },
+    "meal_template_skeleton": {
+        "Monday": {
+            "breakfast": "Oats with berries and nuts + glass of water",
+            "lunch": "Lentil soup + whole grain bread + mixed salad",
+            "dinner": "Grilled fish/tofu + steamed vegetables + brown rice",
+            "snack": "Apple + small handful of almonds"
+        },
+        "Tuesday": {
+            "breakfast": "Poha with vegetables + green tea",
+            "lunch": "Rajma (kidney beans) + roti + cucumber raita",
+            "dinner": "Grilled chicken/paneer + sautéed spinach + quinoa",
+            "snack": "Carrot sticks + hummus"
+        },
+        "Wednesday": {
+            "breakfast": "Smoothie (banana, spinach, flaxseeds, plant milk)",
+            "lunch": "Brown rice + dal + mixed vegetable sabzi",
+            "dinner": "Salmon/grilled tofu + roasted sweet potato + broccoli",
+            "snack": "Handful of walnuts + 1 orange"
+        },
+        "Thursday": {
+            "breakfast": "Whole wheat upma + boiled egg/sprouts",
+            "lunch": "Chickpea salad + whole grain roti + buttermilk",
+            "dinner": "Vegetable stew + brown rice + papad",
+            "snack": "Greek yogurt + mixed seeds"
+        },
+        "Friday": {
+            "breakfast": "Idli + sambar + coconut chutney",
+            "lunch": "Grilled chicken/mushroom wrap + green salad",
+            "dinner": "Fish curry/tofu curry + brown rice",
+            "snack": "Banana + peanut butter (1 tbsp)"
+        },
+        "Saturday": {
+            "breakfast": "Vegetable omelette / chickpea crepe + fruit",
+            "lunch": "Dal khichdi + pickle + yogurt",
+            "dinner": "Baked chicken/paneer tikka + grilled vegetables",
+            "snack": "Mixed fruit bowl"
+        },
+        "Sunday": {
+            "breakfast": "Whole grain toast + avocado + poached egg/tomatoes",
+            "lunch": "Mutton/vegetable biryani (moderate) + raita",
+            "dinner": "Light soup + salad + whole grain crackers",
+            "snack": "A handful of mixed nuts and dates"
+        }
+    }
+}

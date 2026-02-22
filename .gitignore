@@ -1,2 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.db
+venv/
+.env
 HealthCare_backend/.env
 HealthCare_backend\.env
+
+# Node
+node_modules/
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db

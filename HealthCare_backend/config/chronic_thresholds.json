@@ -1,0 +1,53 @@
+{
+    "version": "1.0",
+    "blood_pressure": {
+        "categories": [
+            {
+                "label": "Normal",
+                "systolic_max": 119,
+                "diastolic_max": 79,
+                "color": "green",
+                "flag": false
+            },
+            {
+                "label": "Elevated",
+                "systolic_min": 120,
+                "systolic_max": 129,
+                "diastolic_max": 79,
+                "color": "amber",
+                "flag": true
+            },
+            {
+                "label": "High Stage 1",
+                "systolic_min": 130,
+                "systolic_max": 139,
+                "diastolic_min": 80,
+                "diastolic_max": 89,
+                "color": "orange",
+                "flag": true
+            },
+            {
+                "label": "High Stage 2",
+                "systolic_min": 140,
+                "diastolic_min": 90,
+                "color": "red",
+                "flag": true
+            },
+            {
+                "label": "Hypertensive Crisis",
+                "systolic_min": 180,
+                "diastolic_min": 120,
+                "color": "red",
+                "flag": true,
+                "emergency": true
+            }
+        ],
+        "guidance": {
+            "Normal": "Your blood pressure is within the normal range. Keep up your healthy lifestyle.",
+            "Elevated": "Your blood pressure is slightly elevated. Reduce sodium intake, manage stress, and exercise regularly.",
+            "High Stage 1": "Stage 1 hypertension detected. Lifestyle changes and possible medication required. Consult your doctor.",
+            "High Stage 2": "Stage 2 hypertension requires medical attention. Please see your doctor promptly.",
+            "Hypertensive Crisis": "EMERGENCY: Blood pressure is dangerously high. Seek emergency medical care IMMEDIATELY."
+        }
+    }
+}

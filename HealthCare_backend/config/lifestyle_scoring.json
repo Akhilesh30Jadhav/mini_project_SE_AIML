@@ -1,0 +1,353 @@
+{
+    "version": "1.0",
+    "max_score": 100,
+    "categories": [
+        {
+            "label": "Very Active",
+            "min": 75,
+            "max": 100
+        },
+        {
+            "label": "Active",
+            "min": 50,
+            "max": 74
+        },
+        {
+            "label": "Somewhat Active",
+            "min": 25,
+            "max": 49
+        },
+        {
+            "label": "Lazy",
+            "min": 0,
+            "max": 24
+        }
+    ],
+    "questions": [
+        {
+            "id": "exercise_days",
+            "text": "How many days per week do you exercise (at least 30 min)?",
+            "options": [
+                {
+                    "label": "0 days",
+                    "value": 0,
+                    "points": 0
+                },
+                {
+                    "label": "1–2 days",
+                    "value": 1,
+                    "points": 5
+                },
+                {
+                    "label": "3–4 days",
+                    "value": 2,
+                    "points": 10
+                },
+                {
+                    "label": "5+ days",
+                    "value": 3,
+                    "points": 15
+                }
+            ],
+            "weight": 1.0
+        },
+        {
+            "id": "exercise_intensity",
+            "text": "What is your typical exercise intensity?",
+            "options": [
+                {
+                    "label": "None",
+                    "value": 0,
+                    "points": 0
+                },
+                {
+                    "label": "Light (walking)",
+                    "value": 1,
+                    "points": 3
+                },
+                {
+                    "label": "Moderate (jogging, cycling)",
+                    "value": 2,
+                    "points": 6
+                },
+                {
+                    "label": "Vigorous (HIIT, running, sports)",
+                    "value": 3,
+                    "points": 10
+                }
+            ],
+            "weight": 1.0
+        },
+        {
+            "id": "sleep_hours",
+            "text": "How many hours of sleep do you get on average?",
+            "options": [
+                {
+                    "label": "Less than 5 hours",
+                    "value": 0,
+                    "points": 0
+                },
+                {
+                    "label": "5–6 hours",
+                    "value": 1,
+                    "points": 4
+                },
+                {
+                    "label": "7–8 hours (recommended)",
+                    "value": 2,
+                    "points": 10
+                },
+                {
+                    "label": "More than 9 hours",
+                    "value": 3,
+                    "points": 6
+                }
+            ],
+            "weight": 1.0
+        },
+        {
+            "id": "diet_quality",
+            "text": "How would you describe your daily diet?",
+            "options": [
+                {
+                    "label": "Mostly junk/processed food",
+                    "value": 0,
+                    "points": 0
+                },
+                {
+                    "label": "Mix of healthy and unhealthy",
+                    "value": 1,
+                    "points": 4
+                },
+                {
+                    "label": "Mostly healthy, home-cooked",
+                    "value": 2,
+                    "points": 8
+                },
+                {
+                    "label": "Balanced, nutrient-rich meals",
+                    "value": 3,
+                    "points": 12
+                }
+            ],
+            "weight": 1.0
+        },
+        {
+            "id": "fruits_vegetables",
+            "text": "How many servings of fruits/vegetables do you eat per day?",
+            "options": [
+                {
+                    "label": "None or rarely",
+                    "value": 0,
+                    "points": 0
+                },
+                {
+                    "label": "1–2 servings",
+                    "value": 1,
+                    "points": 3
+                },
+                {
+                    "label": "3–4 servings",
+                    "value": 2,
+                    "points": 6
+                },
+                {
+                    "label": "5+ servings",
+                    "value": 3,
+                    "points": 8
+                }
+            ],
+            "weight": 1.0
+        },
+        {
+            "id": "water_intake",
+            "text": "How much water do you drink daily?",
+            "options": [
+                {
+                    "label": "Less than 1 litre",
+                    "value": 0,
+                    "points": 0
+                },
+                {
+                    "label": "1–2 litres",
+                    "value": 1,
+                    "points": 3
+                },
+                {
+                    "label": "2–3 litres",
+                    "value": 2,
+                    "points": 5
+                },
+                {
+                    "label": "3+ litres",
+                    "value": 3,
+                    "points": 7
+                }
+            ],
+            "weight": 1.0
+        },
+        {
+            "id": "smoking",
+            "text": "Do you smoke?",
+            "options": [
+                {
+                    "label": "Yes, daily",
+                    "value": 0,
+                    "points": 0
+                },
+                {
+                    "label": "Occasionally",
+                    "value": 1,
+                    "points": 3
+                },
+                {
+                    "label": "Quit smoking",
+                    "value": 2,
+                    "points": 6
+                },
+                {
+                    "label": "Never smoked",
+                    "value": 3,
+                    "points": 8
+                }
+            ],
+            "weight": 1.0
+        },
+        {
+            "id": "alcohol",
+            "text": "How often do you consume alcohol?",
+            "options": [
+                {
+                    "label": "Daily",
+                    "value": 0,
+                    "points": 0
+                },
+                {
+                    "label": "Several times a week",
+                    "value": 1,
+                    "points": 2
+                },
+                {
+                    "label": "Occasionally",
+                    "value": 2,
+                    "points": 5
+                },
+                {
+                    "label": "Rarely or never",
+                    "value": 3,
+                    "points": 7
+                }
+            ],
+            "weight": 1.0
+        },
+        {
+            "id": "stress_level",
+            "text": "How would you rate your daily stress level?",
+            "options": [
+                {
+                    "label": "Very high (constantly stressed)",
+                    "value": 0,
+                    "points": 0
+                },
+                {
+                    "label": "High",
+                    "value": 1,
+                    "points": 2
+                },
+                {
+                    "label": "Moderate",
+                    "value": 2,
+                    "points": 5
+                },
+                {
+                    "label": "Low (rarely stressed)",
+                    "value": 3,
+                    "points": 8
+                }
+            ],
+            "weight": 1.0
+        },
+        {
+            "id": "screen_time",
+            "text": "How many hours of recreational screen time per day?",
+            "options": [
+                {
+                    "label": "6+ hours",
+                    "value": 0,
+                    "points": 0
+                },
+                {
+                    "label": "4–6 hours",
+                    "value": 1,
+                    "points": 2
+                },
+                {
+                    "label": "2–4 hours",
+                    "value": 2,
+                    "points": 4
+                },
+                {
+                    "label": "Less than 2 hours",
+                    "value": 3,
+                    "points": 5
+                }
+            ],
+            "weight": 1.0
+        },
+        {
+            "id": "sedentary_hours",
+            "text": "How many hours per day do you sit or remain sedentary?",
+            "options": [
+                {
+                    "label": "10+ hours",
+                    "value": 0,
+                    "points": 0
+                },
+                {
+                    "label": "7–9 hours",
+                    "value": 1,
+                    "points": 2
+                },
+                {
+                    "label": "4–6 hours",
+                    "value": 2,
+                    "points": 5
+                },
+                {
+                    "label": "Less than 4 hours",
+                    "value": 3,
+                    "points": 7
+                }
+            ],
+            "weight": 1.0
+        },
+        {
+            "id": "outdoor_time",
+            "text": "How often do you spend time outdoors?",
+            "options": [
+                {
+                    "label": "Rarely or never",
+                    "value": 0,
+                    "points": 0
+                },
+                {
+                    "label": "1–2 times a week",
+                    "value": 1,
+                    "points": 2
+                },
+                {
+                    "label": "3–5 times a week",
+                    "value": 2,
+                    "points": 4
+                },
+                {
+                    "label": "Daily",
+                    "value": 3,
+                    "points": 5
+                }
+            ],
+            "weight": 1.0
+        }
+    ],
+    "max_raw_score": 100
+}

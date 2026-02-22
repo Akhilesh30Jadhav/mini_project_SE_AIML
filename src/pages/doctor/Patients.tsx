@@ -1,122 +1,52 @@
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import PageHeader from "@/components/common/PageHeader";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/Input";
+import apiClient from "@/lib/apiClient";
 
-const demoPatients = [
-  { id: "P-1001", name: "Riya Sharma", age: 26, risk: 0.74, status: "High" },
-  { id: "P-1002", name: "Aman Verma", age: 42, risk: 0.41, status: "Medium" },
-  { id: "P-1003", name: "Neha Patil", age: 33, risk: 0.18, status: "Low" },
-  { id: "P-1004", name: "Saurabh Kulkarni", age: 51, risk: 0.62, status: "Medium" },
-];
-
-function riskBadge(status: string) {
-  if (status === "High") return { v: "red" as const, label: "High" };
-  if (status === "Medium") return { v: "amber" as const, label: "Medium" };
-  return { v: "green" as const, label: "Low" };
-}
+type PatientRow = { id: string; name: string; email: string; age?: number; gender?: string; last_triage?: string; last_phq9_severity?: string; deficiency_count: number; last_bp_flag?: string };
+const TRIAGE_V: Record<string, "green" | "amber" | "red"> = { Low: "green", Medium: "amber", High: "red" };
 
 export default function Patients() {
-  const nav = useNavigate();
-  const [q, setQ] = useState("");
-  const [filter, setFilter] = useState<"All" | "High" | "Medium" | "Low">("All");
+  const [patients, setPatients] = useState<PatientRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
-  const rows = useMemo(() => {
-    return demoPatients
-      .filter((p) => (filter === "All" ? true : p.status === filter))
-      .filter((p) => (q.trim() ? `${p.name} ${p.id}`.toLowerCase().includes(q.toLowerCase()) : true))
-      .sort((a, b) => b.risk - a.risk);
-  }, [q, filter]);
+  useEffect(() => {
+    apiClient.get("/doctor/patients").then(r => setPatients(r.data)).catch(() => { }).finally(() => setLoading(false));
+  }, []);
+
+  const filtered = patients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.email.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Patients"
-        subtitle="Search, triage, and open patient details. (Demo list for UI/UX + marks.)"
-      />
-
-      <Card className="rounded-2xl border-slate-200 bg-white shadow-sm">
-        <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div>
-            <CardTitle className="text-base">Patient Registry</CardTitle>
-            <CardDescription>Search + risk triage filter</CardDescription>
-          </div>
-
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <Input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Search by name or ID..."
-              className="w-full sm:w-72"
-            />
-
-            <div className="flex gap-2">
-              {(["All", "High", "Medium", "Low"] as const).map((k) => (
-                <button
-                  key={k}
-                  onClick={() => setFilter(k)}
-                  className={[
-                    "rounded-xl border px-3 py-2 text-xs font-medium",
-                    filter === k
-                      ? "border-slate-900 bg-slate-900 text-white"
-                      : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50",
-                  ].join(" ")}
-                >
-                  {k}
-                </button>
+      <PageHeader title="Patients" subtitle={`${patients.length} registered patients — click to view full health summary`} />
+      <div className="max-w-xs">
+        <Input placeholder="Search by name or email…" value={search} onChange={e => setSearch(e.target.value)} />
+      </div>
+      <Card className="rounded-2xl border-slate-200 shadow-sm">
+        <CardContent className="p-0">
+          {loading ? <div className="text-center py-12 text-slate-500">Loading…</div> : filtered.length === 0 ? (
+            <div className="text-center py-12 text-slate-500">No patients found.</div>
+          ) : (
+            <div className="space-y-0 divide-y divide-slate-100">
+              {filtered.map(p => (
+                <Link key={p.id} to={`/doctor/patients/${p.id}`} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 transition-colors">
+                  <div>
+                    <div className="font-semibold text-slate-900 text-sm">{p.name}</div>
+                    <div className="text-xs text-slate-400">{p.email} · {p.age ? `${p.age} yrs` : "Age N/A"} · {p.gender ?? "Gender N/A"}</div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap justify-end">
+                    {p.last_triage && <Badge variant={TRIAGE_V[p.last_triage] ?? "default"}>{p.last_triage}</Badge>}
+                    {p.deficiency_count > 0 && <Badge variant="amber">{p.deficiency_count} def</Badge>}
+                    {p.last_bp_flag && p.last_bp_flag !== "Normal" && <Badge variant="red">⚠ BP</Badge>}
+                  </div>
+                </Link>
               ))}
             </div>
-          </div>
-        </CardHeader>
-
-        <CardContent>
-          <div className="overflow-hidden rounded-2xl border border-slate-200">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-slate-600">
-                <tr>
-                  <th className="px-4 py-3 text-left font-medium">Patient</th>
-                  <th className="px-4 py-3 text-left font-medium">Age</th>
-                  <th className="px-4 py-3 text-left font-medium">Risk</th>
-                  <th className="px-4 py-3 text-left font-medium">Triage</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((p) => {
-                  const b = riskBadge(p.status);
-                  return (
-                    <tr
-                      key={p.id}
-                      className="border-t border-slate-200 hover:bg-slate-50 cursor-pointer"
-                      onClick={() => nav(`/doctor/patients/${p.id}`)}
-                    >
-                      <td className="px-4 py-3">
-                        <div className="font-semibold text-slate-900">{p.name}</div>
-                        <div className="text-xs text-slate-500">{p.id}</div>
-                      </td>
-                      <td className="px-4 py-3">{p.age}</td>
-                      <td className="px-4 py-3">{Math.round(p.risk * 100)}%</td>
-                      <td className="px-4 py-3">
-                        <Badge variant={b.v}>{b.label}</Badge>
-                      </td>
-                    </tr>
-                  );
-                })}
-                {rows.length === 0 ? (
-                  <tr className="border-t border-slate-200">
-                    <td className="px-4 py-6 text-slate-500" colSpan={4}>
-                      No patients match your search/filter.
-                    </td>
-                  </tr>
-                ) : null}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="mt-3 text-xs text-slate-500">
-            Marks tip: mention “search, sort, filter, and clickable triage workflow”.
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>
