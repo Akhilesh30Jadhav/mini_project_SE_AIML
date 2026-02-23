@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard, HeartPulse, FileText, Calendar, History, Users,
   Activity, Zap, Brain, UtensilsCrossed, MessageSquare, User, Stethoscope,
+  ShieldAlert,
 } from "lucide-react";
 import { logout } from "@/features/auth/auth.store";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +20,7 @@ export function Sidebar({ role }: { role: UserRole }) {
     { to: "/patient/mental", label: "Mental Wellness", icon: Brain },
     { to: "/patient/chronic", label: "Blood Pressure", icon: HeartPulse },
     { to: "/patient/diet", label: "Diet Plan", icon: UtensilsCrossed },
+    { to: "/patient/diabetes-risk", label: "Diabetes Risk", icon: ShieldAlert },
     { to: "/patient/appointments", label: "Appointments", icon: Calendar },
     { to: "/patient/chatbot", label: "Health Chat", icon: MessageSquare },
     { to: "/patient/history", label: "History", icon: History },

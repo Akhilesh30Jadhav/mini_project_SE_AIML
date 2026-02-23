@@ -10,6 +10,8 @@ from typing import List, Optional
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 import re, io
+import joblib
+import numpy as np
 
 from .db import (
     init_db, create_user, get_user_by_email, get_user_by_id,
@@ -42,6 +44,7 @@ from .schemas import (
     DietPreferences, DietPlanOut,
     AppointmentBook, AppointmentCancel, AppointmentOut,
     ChatRequest, ChatResponse,
+    DiabetesPredictRequest, DiabetesPredictResponse, FeatureImportance,
 )
 
 # ─── Config Loading ───────────────────────────────────────────────────────────
@@ -74,11 +77,34 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ─── ML Model Loading ─────────────────────────────────────────────────────────
+
+MODEL_DIR = os.path.join(os.path.dirname(__file__), "..", "models")
+DIABETES_MODEL = None
+DIABETES_FEATURES = None
+DIABETES_ACCURACY = 0.0
+
+
 @app.on_event("startup")
 def _startup():
     init_db()
     # Auto-seed demo accounts (safe to call repeatedly — skips if exists)
     _seed_demo_accounts()
+    # Load ML models
+    _load_diabetes_model()
+
+
+def _load_diabetes_model():
+    global DIABETES_MODEL, DIABETES_FEATURES, DIABETES_ACCURACY
+    model_path = os.path.join(MODEL_DIR, "diabetes_model.joblib")
+    if os.path.exists(model_path):
+        artifact = joblib.load(model_path)
+        DIABETES_MODEL = artifact["model"]
+        DIABETES_FEATURES = artifact["features"]
+        DIABETES_ACCURACY = artifact["accuracy"]
+        print(f"  Diabetes model loaded (accuracy: {DIABETES_ACCURACY:.2%})")
+    else:
+        print(f"  WARNING: diabetes model not found at {model_path}")
 
 
 def _seed_demo_accounts():
@@ -659,6 +685,49 @@ def cancel_appt(req: AppointmentCancel, current_user=Depends(require_role("patie
 @app.get("/appointments")
 def my_appointments(current_user=Depends(require_role("patient"))):
     return get_patient_appointments(current_user["id"])
+
+
+# ─── Diabetes Prediction ──────────────────────────────────────────────────────
+
+@app.post("/patient/predict/diabetes", response_model=DiabetesPredictResponse)
+def predict_diabetes(req: DiabetesPredictRequest, current_user=Depends(require_role("patient"))):
+    if DIABETES_MODEL is None:
+        raise HTTPException(status_code=503, detail="Diabetes prediction model not loaded")
+
+    # Build feature array in the exact order the model expects
+    features = np.array([[
+        req.pregnancies, req.glucose, req.blood_pressure, req.skin_thickness,
+        req.insulin, req.bmi, req.diabetes_pedigree, req.age,
+    ]])
+
+    # Predict probability
+    proba = DIABETES_MODEL.predict_proba(features)[0][1]  # P(diabetes=1)
+
+    # Risk level
+    if proba < 0.33:
+        risk_level = "Low"
+    elif proba < 0.66:
+        risk_level = "Medium"
+    else:
+        risk_level = "High"
+
+    # Feature importances from the trained model
+    importances = DIABETES_MODEL.feature_importances_
+    feature_names = [
+        "Pregnancies", "Glucose", "Blood Pressure", "Skin Thickness",
+        "Insulin", "BMI", "Diabetes Pedigree", "Age",
+    ]
+    fi_list = sorted(
+        [FeatureImportance(feature=n, importance=round(float(v), 4)) for n, v in zip(feature_names, importances)],
+        key=lambda x: -x.importance,
+    )
+
+    return DiabetesPredictResponse(
+        probability=round(float(proba), 4),
+        risk_level=risk_level,
+        accuracy=round(float(DIABETES_ACCURACY), 4),
+        feature_importances=fi_list,
+    )
 
 
 # ─── Chatbot ──────────────────────────────────────────────────────────────────

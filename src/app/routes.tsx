@@ -21,6 +21,7 @@ import Appointments from "@/pages/patient/Appointments";
 import Chatbot from "@/pages/patient/Chatbot";
 import Profile from "@/pages/patient/Profile";
 import History from "@/pages/patient/History";
+import RiskPrediction from "@/pages/patient/RiskPrediction";
 
 // Doctor
 import DoctorDashboard from "@/pages/doctor/DoctorDashboard";
@@ -60,6 +61,7 @@ export default function AppRoutes() {
         <Route path="diet" element={<DietPlan />} />
         <Route path="appointments" element={<Appointments />} />
         <Route path="chatbot" element={<Chatbot />} />
+        <Route path="diabetes-risk" element={<RiskPrediction />} />
         <Route path="profile" element={<Profile />} />
         <Route path="history" element={<History />} />
       </Route>

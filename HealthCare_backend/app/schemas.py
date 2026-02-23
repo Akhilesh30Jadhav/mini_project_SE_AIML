@@ -200,3 +200,29 @@ class DoctorPatientSummary(BaseModel):
     last_phq9_severity: Optional[str]
     last_lab_flags: int
     last_bp_flag: Optional[str]
+
+
+# ─── Diabetes Prediction ──────────────────────────────────────────────────────
+
+class DiabetesPredictRequest(BaseModel):
+    pregnancies: float = 0
+    glucose: float = 120
+    blood_pressure: float = 70
+    skin_thickness: float = 20
+    insulin: float = 80
+    bmi: float = 25.0
+    diabetes_pedigree: float = 0.5
+    age: float = 30
+
+
+class FeatureImportance(BaseModel):
+    feature: str
+    importance: float
+
+
+class DiabetesPredictResponse(BaseModel):
+    probability: float
+    risk_level: str  # Low | Medium | High
+    accuracy: float
+    feature_importances: List[FeatureImportance]
+

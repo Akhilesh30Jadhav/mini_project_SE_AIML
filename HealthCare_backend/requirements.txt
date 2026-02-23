@@ -8,3 +8,5 @@ python-jose[cryptography]
 passlib[bcrypt]
 bcrypt
 groq
+scikit-learn
+joblib
