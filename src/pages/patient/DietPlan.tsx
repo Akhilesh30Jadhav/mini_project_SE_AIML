@@ -112,8 +112,8 @@ export default function DietPlan() {
                             {/* Meals */}
                             <div className="space-y-2">
                                 {MEALS.map(meal => (
-                                    <div key={meal} className="flex gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-                                        <div className="w-28 shrink-0 text-xs font-semibold text-slate-700">{MEAL_LABELS[meal]}</div>
+                                    <div key={meal} className="flex flex-col sm:flex-row gap-1 sm:gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                                        <div className="sm:w-28 shrink-0 text-xs font-semibold text-slate-700">{MEAL_LABELS[meal]}</div>
                                         <div className="text-sm text-slate-700">{mealPlan[activeDay]?.[meal] ?? "—"}</div>
                                     </div>
                                 ))}

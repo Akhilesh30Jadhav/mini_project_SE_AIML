@@ -126,14 +126,14 @@ export default function Landing() {
     <div className="min-h-screen bg-slate-50">
       {/* Top bar */}
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 bg-slate-50">
-              <Stethoscope size={18} className="text-slate-900" />
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="grid h-8 w-8 sm:h-10 sm:w-10 place-items-center rounded-xl border border-slate-200 bg-slate-50">
+              <Stethoscope size={16} className="text-slate-900" />
             </div>
             <div>
               <div className="text-sm font-semibold text-slate-900">CareSphere</div>
-              <div className="text-xs text-slate-500">All-in-one Healthcare Platform</div>
+              <div className="text-xs text-slate-500 hidden sm:block">All-in-one Healthcare Platform</div>
             </div>
           </div>
 
@@ -146,13 +146,13 @@ export default function Landing() {
       </header>
 
       {/* Hero */}
-      <main className="mx-auto max-w-6xl px-6 py-10">
-        <div className="grid gap-8 lg:grid-cols-12">
+      <main className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-10">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-12">
           <div className="lg:col-span-7">
-            <h1 className="text-4xl font-semibold tracking-tight text-slate-900">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-slate-900">
               AI-powered Healthcare Platform
             </h1>
-            <p className="mt-3 text-lg text-slate-600">
+            <p className="mt-2 sm:mt-3 text-base sm:text-lg text-slate-600">
               Risk Prediction, Medical Report Analyzer, and Appointment No-Show Insights — in one clean,
               clinician-friendly dashboard.
             </p>
@@ -195,10 +195,10 @@ export default function Landing() {
         </div>
 
         {/* Modules */}
-        <section id="modules" className="mt-10">
-          <div className="flex items-end justify-between gap-4">
+        <section id="modules" className="mt-8 sm:mt-10">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4">
             <div>
-              <h2 className="text-2xl font-semibold text-slate-900">Core Modules</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold text-slate-900">Core Modules</h2>
               <p className="mt-1 text-sm text-slate-600">
                 Three integrated workflows: prediction, documents, and scheduling insights.
               </p>
@@ -208,7 +208,7 @@ export default function Landing() {
             </div>
           </div>
 
-          <div className="mt-4 grid gap-4 md:grid-cols-3">
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
             <Module
               icon={Activity}
               title="Risk Prediction"
@@ -237,13 +237,13 @@ export default function Landing() {
         </section>
 
         {/* How it works */}
-        <section className="mt-10">
-          <h2 className="text-2xl font-semibold text-slate-900">How it works</h2>
+        <section className="mt-8 sm:mt-10">
+          <h2 className="text-xl sm:text-2xl font-semibold text-slate-900">How it works</h2>
           <p className="mt-1 text-sm text-slate-600">
             Simple, explainable workflow suitable for a healthcare product demo.
           </p>
 
-          <div className="mt-4 grid gap-4 lg:grid-cols-3">
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Step
               n="01"
               icon={ClipboardList}
@@ -266,7 +266,7 @@ export default function Landing() {
         </section>
 
         {/* Compliance / Trust */}
-        <section className="mt-10">
+        <section className="mt-8 sm:mt-10">
           <Card className="rounded-2xl border-slate-200 bg-white shadow-sm">
             <CardContent className="flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between">
               <div>

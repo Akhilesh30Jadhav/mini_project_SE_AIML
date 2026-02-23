@@ -112,7 +112,7 @@ export default function LabReport() {
                             onDrop={onDrop}
                             onDragOver={e => { e.preventDefault(); setDragOver(true); }}
                             onDragLeave={() => setDragOver(false)}
-                            className={`relative border-2 border-dashed rounded-2xl p-10 text-center transition-all cursor-pointer
+                            className={`relative border-2 border-dashed rounded-2xl p-6 sm:p-10 text-center transition-all cursor-pointer
                                 ${dragOver ? "border-blue-400 bg-blue-50" : "border-slate-300 bg-slate-50 hover:border-blue-300 hover:bg-blue-50/50"}`}
                             onClick={() => document.getElementById("pdf-input")?.click()}
                         >
@@ -157,18 +157,18 @@ export default function LabReport() {
                     </CardHeader>
                     <CardContent className="space-y-3">
                         {rows.map((row, i) => (
-                            <div key={i} className="flex gap-2 items-end">
+                            <div key={i} className="flex flex-col sm:flex-row gap-2 sm:items-end">
                                 <div className="flex-1">
                                     {i === 0 && <label className="block text-xs font-medium text-slate-600 mb-1">Test Name</label>}
                                     <Input value={row.test_name} onChange={e => updateRow(i, "test_name", e.target.value)}
                                         placeholder="e.g. Hemoglobin" />
                                 </div>
-                                <div className="w-28">
+                                <div className="w-full sm:w-28">
                                     {i === 0 && <label className="block text-xs font-medium text-slate-600 mb-1">Value</label>}
                                     <Input type="number" value={row.value} onChange={e => updateRow(i, "value", e.target.value)}
                                         placeholder="12.5" />
                                 </div>
-                                <div className="w-24">
+                                <div className="w-full sm:w-24">
                                     {i === 0 && <label className="block text-xs font-medium text-slate-600 mb-1">Unit</label>}
                                     <Input value={row.unit} onChange={e => updateRow(i, "unit", e.target.value)}
                                         placeholder="g/dL" />

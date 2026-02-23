@@ -45,7 +45,7 @@ export default function Chatbot() {
     const QUICK = ["What do low hemoglobin levels mean?", "How can I improve my sleep quality?", "What are normal blood pressure ranges?", "Explain my lifestyle score", "Foods rich in Vitamin D?", "Stress management tips"];
 
     return (
-        <div className="flex flex-col h-[calc(100vh-140px)] max-h-[780px]">
+        <div className="flex flex-col h-[calc(100vh-120px)] sm:h-[calc(100vh-140px)] max-h-[780px]">
             <PageHeader title="Health Assistant" subtitle="Ask health questions. Context from your health data is shared to personalize answers." />
 
             <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-2 text-xs text-amber-800 mb-3">
