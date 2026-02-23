@@ -77,6 +77,25 @@ app.add_middleware(
 @app.on_event("startup")
 def _startup():
     init_db()
+    # Auto-seed demo accounts (safe to call repeatedly — skips if exists)
+    _seed_demo_accounts()
+
+
+def _seed_demo_accounts():
+    """Create demo patient and doctor accounts if they don't exist."""
+    import bcrypt
+    demos = [
+        {"email": "patient@demo.com", "name": "Demo Patient", "role": "patient"},
+        {"email": "doctor@demo.com", "name": "Dr. Demo", "role": "doctor"},
+    ]
+    for demo in demos:
+        if not get_user_by_email(demo["email"]):
+            hashed = bcrypt.hashpw("demo1234".encode(), bcrypt.gensalt()).decode()
+            create_user({
+                "id": _uid(), "email": demo["email"], "name": demo["name"],
+                "role": demo["role"], "hashed_password": hashed, "created_at": _now(),
+            })
+            print(f"  ✅ Seeded {demo['role']}: {demo['email']}")
 
 
 def _now() -> str:
