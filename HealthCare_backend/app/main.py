@@ -93,7 +93,7 @@ def _seed_demo_accounts():
             hashed = bcrypt.hashpw("demo1234".encode(), bcrypt.gensalt()).decode()
             create_user({
                 "id": _uid(), "email": demo["email"], "name": demo["name"],
-                "role": demo["role"], "hashed_password": hashed, "created_at": _now(),
+                "role": demo["role"], "password_hash": hashed, "created_at": _now(),
             })
             print(f"  ✅ Seeded {demo['role']}: {demo['email']}")
 
