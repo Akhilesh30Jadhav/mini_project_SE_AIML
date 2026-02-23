@@ -694,10 +694,42 @@ def predict_diabetes(req: DiabetesPredictRequest, current_user=Depends(require_r
     if DIABETES_MODEL is None:
         raise HTTPException(status_code=503, detail="Diabetes prediction model not loaded")
 
-    # Build feature array in the exact order the model expects
+    # ── Map user-friendly inputs → model features ──────────────────────────
+
+    # BMI from height + weight
+    height_m = req.height_cm / 100.0
+    bmi = req.weight_kg / (height_m * height_m) if height_m > 0 else 25.0
+
+    # Pregnancies: 0 for males
+    pregnancies = req.pregnancies if req.gender == "female" else 0
+
+    # Family history → Diabetes Pedigree Function
+    pedigree_map = {"none": 0.2, "grandparent": 0.4, "one_parent": 0.6, "both_parents": 0.9}
+    diabetes_pedigree = pedigree_map.get(req.family_history, 0.3)
+
+    # Activity level → estimated insulin (sedentary → higher insulin resistance)
+    insulin_map = {"sedentary": 160, "light": 120, "moderate": 80, "active": 40}
+    insulin = insulin_map.get(req.activity_level, 80)
+
+    # Glucose: use provided value or estimate from activity/BMI
+    if req.glucose is not None and req.glucose > 0:
+        glucose = req.glucose
+    else:
+        # Reasonable estimate: base 100, +1 per BMI point over 25, +10 if sedentary
+        glucose = 100 + max(0, (bmi - 25)) * 1.5
+        if req.activity_level == "sedentary":
+            glucose += 10
+
+    # Blood pressure: use provided value or median
+    blood_pressure = req.blood_pressure if (req.blood_pressure is not None and req.blood_pressure > 0) else 72
+
+    # Skin thickness: dataset median (hidden from user)
+    skin_thickness = 29
+
+    # Build feature array: [Pregnancies, Glucose, BP, SkinThickness, Insulin, BMI, Pedigree, Age]
     features = np.array([[
-        req.pregnancies, req.glucose, req.blood_pressure, req.skin_thickness,
-        req.insulin, req.bmi, req.diabetes_pedigree, req.age,
+        pregnancies, glucose, blood_pressure, skin_thickness,
+        insulin, bmi, diabetes_pedigree, req.age,
     ]])
 
     # Predict probability

@@ -205,14 +205,15 @@ class DoctorPatientSummary(BaseModel):
 # ─── Diabetes Prediction ──────────────────────────────────────────────────────
 
 class DiabetesPredictRequest(BaseModel):
-    pregnancies: float = 0
-    glucose: float = 120
-    blood_pressure: float = 70
-    skin_thickness: float = 20
-    insulin: float = 80
-    bmi: float = 25.0
-    diabetes_pedigree: float = 0.5
     age: float = 30
+    gender: str = "female"  # male | female
+    pregnancies: float = 0
+    height_cm: float = 165
+    weight_kg: float = 65
+    family_history: str = "none"  # none | one_parent | both_parents | grandparent
+    activity_level: str = "moderate"  # sedentary | light | moderate | active
+    glucose: Optional[float] = None  # fasting glucose if known (mg/dL)
+    blood_pressure: Optional[float] = None  # diastolic BP if known (mm Hg)
 
 
 class FeatureImportance(BaseModel):
