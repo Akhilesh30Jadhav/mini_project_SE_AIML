@@ -710,7 +710,7 @@ def chat(req: ChatRequest, current_user=Depends(require_role("patient"))):
         return ChatResponse(reply=reply)
     except Exception as e:
         return ChatResponse(
-            reply=f"I'm currently unable to process your request. Please try again later. (Error: {type(e).__name__})",
+            reply=f"I'm currently unable to process your request. Please try again later. (Error: {type(e).__name__}: {str(e)[:200]})",
         )
 
 
