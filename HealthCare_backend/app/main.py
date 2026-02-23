@@ -201,7 +201,11 @@ def generate_diet_plan(deficiencies: List[str], preferences: DietPreferences) ->
     recommendations = {}
     for d in deficiencies:
         if d in food_map:
-            recommendations[d] = food_map[d]
+            entry = food_map[d]
+            recommendations[d] = {
+                "eat": entry.get("recommend", []),
+                "avoid": entry.get("avoid", []),
+            }
     # Adjust meal template for vegetarians/vegans
     adjusted_meals = {}
     for day, meals in meal_tpl.items():

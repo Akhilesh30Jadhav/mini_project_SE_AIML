@@ -259,47 +259,54 @@
         }
     },
     "meal_template_skeleton": {
-        "Monday": {
+        "day_1": {
             "breakfast": "Oats with berries and nuts + glass of water",
+            "mid_morning_snack": "Apple + small handful of almonds",
             "lunch": "Lentil soup + whole grain bread + mixed salad",
-            "dinner": "Grilled fish/tofu + steamed vegetables + brown rice",
-            "snack": "Apple + small handful of almonds"
+            "evening_snack": "Carrot sticks + hummus",
+            "dinner": "Grilled fish/tofu + steamed vegetables + brown rice"
         },
-        "Tuesday": {
+        "day_2": {
             "breakfast": "Poha with vegetables + green tea",
+            "mid_morning_snack": "Handful of walnuts + 1 orange",
             "lunch": "Rajma (kidney beans) + roti + cucumber raita",
-            "dinner": "Grilled chicken/paneer + sautéed spinach + quinoa",
-            "snack": "Carrot sticks + hummus"
+            "evening_snack": "Greek yogurt + mixed seeds",
+            "dinner": "Grilled chicken/paneer + sautéed spinach + quinoa"
         },
-        "Wednesday": {
+        "day_3": {
             "breakfast": "Smoothie (banana, spinach, flaxseeds, plant milk)",
+            "mid_morning_snack": "Mixed fruit bowl",
             "lunch": "Brown rice + dal + mixed vegetable sabzi",
-            "dinner": "Salmon/grilled tofu + roasted sweet potato + broccoli",
-            "snack": "Handful of walnuts + 1 orange"
+            "evening_snack": "Banana + peanut butter (1 tbsp)",
+            "dinner": "Salmon/grilled tofu + roasted sweet potato + broccoli"
         },
-        "Thursday": {
+        "day_4": {
             "breakfast": "Whole wheat upma + boiled egg/sprouts",
+            "mid_morning_snack": "A handful of mixed nuts and dates",
             "lunch": "Chickpea salad + whole grain roti + buttermilk",
-            "dinner": "Vegetable stew + brown rice + papad",
-            "snack": "Greek yogurt + mixed seeds"
+            "evening_snack": "Carrot sticks + hummus",
+            "dinner": "Vegetable stew + brown rice + papad"
         },
-        "Friday": {
+        "day_5": {
             "breakfast": "Idli + sambar + coconut chutney",
+            "mid_morning_snack": "Apple + small handful of almonds",
             "lunch": "Grilled chicken/mushroom wrap + green salad",
-            "dinner": "Fish curry/tofu curry + brown rice",
-            "snack": "Banana + peanut butter (1 tbsp)"
+            "evening_snack": "Greek yogurt + mixed seeds",
+            "dinner": "Fish curry/tofu curry + brown rice"
         },
-        "Saturday": {
+        "day_6": {
             "breakfast": "Vegetable omelette / chickpea crepe + fruit",
+            "mid_morning_snack": "Handful of walnuts + 1 orange",
             "lunch": "Dal khichdi + pickle + yogurt",
-            "dinner": "Baked chicken/paneer tikka + grilled vegetables",
-            "snack": "Mixed fruit bowl"
+            "evening_snack": "Banana + peanut butter (1 tbsp)",
+            "dinner": "Baked chicken/paneer tikka + grilled vegetables"
         },
-        "Sunday": {
+        "day_7": {
             "breakfast": "Whole grain toast + avocado + poached egg/tomatoes",
+            "mid_morning_snack": "Mixed fruit bowl",
             "lunch": "Mutton/vegetable biryani (moderate) + raita",
-            "dinner": "Light soup + salad + whole grain crackers",
-            "snack": "A handful of mixed nuts and dates"
+            "evening_snack": "A handful of mixed nuts and dates",
+            "dinner": "Light soup + salad + whole grain crackers"
         }
     }
 }
