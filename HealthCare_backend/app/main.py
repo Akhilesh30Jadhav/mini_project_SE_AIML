@@ -657,8 +657,8 @@ Start every response by directly addressing the question. End with a brief remin
 @app.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest, current_user=Depends(require_role("patient"))):
     try:
-        from openai import OpenAI
-        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        import google.generativeai as genai
+        genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
         system_content = SYSTEM_PROMPT
         if req.include_context:
@@ -678,16 +678,21 @@ def chat(req: ChatRequest, current_user=Depends(require_role("patient"))):
             if context_parts:
                 system_content += "\n\nPatient Context:\n" + "\n".join(context_parts)
 
-        messages = [{"role": "system", "content": system_content}]
-        messages += [{"role": m.role, "content": m.content} for m in req.messages]
-
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=messages,
-            max_tokens=600,
-            temperature=0.7,
+        model = genai.GenerativeModel(
+            model_name="gemini-2.0-flash",
+            system_instruction=system_content,
         )
-        reply = response.choices[0].message.content
+
+        # Build conversation history
+        history = []
+        for m in req.messages[:-1]:
+            role = "user" if m.role == "user" else "model"
+            history.append({"role": role, "parts": [m.content]})
+
+        chat_session = model.start_chat(history=history)
+        last_msg = req.messages[-1].content if req.messages else "Hello"
+        response = chat_session.send_message(last_msg)
+        reply = response.text
         return ChatResponse(reply=reply)
     except Exception as e:
         return ChatResponse(
